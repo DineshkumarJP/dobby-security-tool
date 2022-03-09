@@ -87,7 +87,7 @@ test_5_29() {
   
 	output=$(brctl show dobby0 | grep veth | awk '{ print $4}')
    
-    if [ "$output" == "dobby0" ]; then
+    if [ "$output" == "veth0" ]; then
       fail "$check"
       return
     fi
