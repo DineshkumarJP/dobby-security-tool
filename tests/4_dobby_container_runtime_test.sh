@@ -81,15 +81,34 @@ test_5_28() {
 
 test_5_29() {
 	local testid="5.29"
-	local desc="Ensure that Docker's default bridge "dobby0" is not used"
+	local desc="Ensure that Dobby's default bridge "dobby0" is not used"
 	local check="$testid - $desc"
 	local output
+	local ouput_1
   
 	output=$(brctl show dobby0 | grep veth | awk '{ print $4}')
+	output_1=$(brctl show | grep dobby0 | awk '{ print $1}')
    
-    if [ "$output" == "veth0" ]; then
+    if [ "$output" == "veth0" -o "$output_1" == "dobby0" ]; then
       fail "$check"
       return
     fi
     pass "$check"
+}
+
+test_5_31() {
+	local testid="5.31"
+	local desc="Ensure that the Dobby socket is not mounted inside any containers"
+	local check="$testid - $desc"
+	local output
+	local dobbypid
+	
+	dobbypid=$(pidof DobbyInit)
+	output=$(find /proc/$dobbypid/root/* -iname dobbyPty.sock | grep -v find)
+   
+    if [ "$output" == "" ]; then
+      pass "$check"
+      return
+    fi
+    fail "$check"
 }
