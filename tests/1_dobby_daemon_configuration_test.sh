@@ -7,6 +7,7 @@ test_2_1() {
   local output
   
   output=$(ps -fe | grep "DobbyDaemon"| awk '{print $1}')
+  output=$(echo $output | awk '{print $1}')
   if [ "$output" == "root" ]; then
       warn "$check"
 	  return
