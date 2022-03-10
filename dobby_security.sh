@@ -65,12 +65,14 @@ test_4_1
 
 printtxt "\n${bldbluclr}Dobby Continer Runtime Test ${txtrst}"
 
-test_5_9
+test_5_3
 test_5_10
+test_5_12
 test_5_15
 test_5_17
 test_5_28
 test_5_29
+test_5_31
 
 totalcount=$(($totalpass+$totalfail+$totalwarn))
 printtxt "\n\n${bldbluclr}Test Results Summary${txtrst}"
