@@ -20,4 +20,4 @@ Ex: ./dobby-security.sh Netflix
 After excuted the script, you will get the output as test results summary.
 
 
-<img width="478" alt="dobby_final" src="https://user-images.githubusercontent.com/99791803/157651632-ca659eef-f33f-4e9d-ae19-2b5d8557e622.png">
+![image](https://user-images.githubusercontent.com/99791803/157653885-0d174419-a335-4da7-ba10-2ae9b8883b9c.png)
