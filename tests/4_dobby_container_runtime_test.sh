@@ -1,5 +1,43 @@
 #!/bin/bash
 
+test_5_3() {
+	local testid="5.3"
+	local desc="Ensure that Linux kernel capabilities are restricted within containers"
+	local check="$testid - $desc"
+	local output
+	local DobbyInit_PID
+	
+	DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
+	status=$(cat /proc/$DobbyInit_PID/status | grep CapPrm | awk '{print $2}')
+	output=$(capsh --decode=$status | sed 's/.*=//g')
+	
+	input=( cap_net_raw cap_dac_read_search cap_sys_module cap_sys_admin cap_sys_ptrace )
+	IFS=','
+	read -a ouputarr <<<"$output"
+	
+	#accessing each element of array
+	for i in "${!ouputarr[@]}";
+	do
+		for j in "${!input[@]}";
+		do
+			if [ "${input[$j]}" == "${ouputarr[$i]}" ]; then
+				fail "$check"
+				return
+			elif [ "${input[$j]}" == "${ouputarr[$i]}" ]; then
+				fail "$check"
+				return
+			elif [ "${input[$j]}" == "${ouputarr[$i]}" ]; then
+				fail "$check"
+				return
+			elif [ "${input[$j]}" == "${ouputarr[$i]}" ]; then
+				fail "$check"
+				return
+			fi
+		done
+	done
+	pass "$check"
+}
+
 test_5_9() {
 	local testid="5.9"
 	local desc="Ensure that the host's network namespace is not shared"
@@ -28,6 +66,25 @@ test_5_10() {
       return
     fi
     pass "$check"
+}
+
+test_5_12() {
+        local testid="5.12"
+        local desc="Ensure that the container's root filesystem is mounted as read only"
+        local check="$testid - $desc"
+        local output
+        local Dobby_pid
+
+        Dobby_pid=$(pidof DobbyInit)
+        output=$(cat /proc/$Dobby_pid/mounts | grep "/ ")
+        output_1=$(echo $output | awk '{ print $4}')
+
+        if [ "$output_1" == "ro" ]; then
+              pass "$check"
+               return
+        fi
+              fail "$check"
+
 }
 
 test_5_15() {
