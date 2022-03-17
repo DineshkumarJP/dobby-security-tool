@@ -13,7 +13,7 @@ test_3_1() {
       pass "$check"
       return
     fi
-    fail "$check"
+    fail "$check Wrong ownership for $file"
     return
   fi
   
