@@ -9,10 +9,11 @@ crunVersion=$(crun --version)
 # Load outside scripts
 . ./functions/output.sh
 . ./functions/functions.sh
-. ./tests/1_dobby_daemon_configuration_test.sh
-. ./tests/2_dobby_daemon_configuration_files_test.sh
-. ./tests/3_dobby_container_images_test.sh
-. ./tests/4_dobby_container_runtime_test.sh
+. ./tests/1_Host_Configuration.sh
+. ./tests/2_dobby_daemon_configuration_test.sh
+. ./tests/3_dobby_daemon_configuration_files_test.sh
+. ./tests/4_dobby_container_images_test.sh
+. ./tests/5_dobby_container_runtime_test.sh
 
 # Check for required program(s)
 req_programs 'awk grep stat sed DobbyDaemon DobbyTool'
@@ -46,6 +47,9 @@ printtxt "Initializing the test $(date)\n"
 # Load all the tests from tests/ and run them
 main() {
 
+printtxt "\n${bldbluclr}Host Configuration ${txtrst}"
+
+test_1_2_2
 printtxt "\n${bldbluclr}Dobby Daemon Configuration Test ${txtrst}"
 
 test_2_1
@@ -67,7 +71,7 @@ test_4_8
 printtxt "\n${bldbluclr}Dobby Continer Runtime Test ${txtrst}"
 test_5_3
 test_5_5
-#test_5_9
+test_5_9
 test_5_10
 test_5_12
 test_5_15
