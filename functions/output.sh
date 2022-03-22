@@ -7,6 +7,7 @@ bldbluclr='\033[1;34m' # Bold Blue
 bldcynclr='\033[1;36m' # Bold yellow
 bldylwclr='\033[1;33m' # Bold cyan
 bldmgnclr='\033[1;35m' # Bold Magenta
+bldwhtclr='\033[1;37m' # Bold white
 txtrst='\033[0m'	   # No Color
 
 # Print the text
@@ -18,6 +19,7 @@ printtxt () {
 info () {
  printf "%b\n" "${bldbluclr}[INFO]${txtrst} $1"
 }
+
 
 # Pass Print
 pass () {
@@ -46,10 +48,6 @@ header_info() {
 header "# ============================================================================================
 # Dobby Security Tool v$version                                                                 
 #                                                                                            
-# Dobby Version : $DobbyVersion
-#
-# crun Version : $crunVersion
-#
 # A script based tool for security vulnerability scanning of dobby container                        
 # ============================================================================================"
 }
@@ -70,4 +68,3 @@ req_programs() {
   echo "ss or netstat command not found."
   exit 1
 }
-
