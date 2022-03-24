@@ -4,7 +4,9 @@ test_5_3() {
 	local desc="Ensure that Linux kernel capabilities are restricted within containers"
 	local check="$testid - $desc"
 	local output
+	local input
 	local DobbyInit_PID
+	local ouputarr
 	
 	DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
 	
@@ -40,8 +42,9 @@ test_5_5() {
         local testid="5.5"
         local desc="Ensure sensitive host system directories are not mounted on containers"
         local check="$testid - $desc"
-        local output
-        local Dobby_pid
+        local output_1
+	local output_2
+        local DobbyInit_PID
 
 	DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
         output_1=$(cat /proc/$DobbyInit_PID/mounts | grep "etc")
@@ -69,7 +72,7 @@ test_5_9() {
       fail "$check"
       return
     fi
-    pass "$check"
+      pass "$check"
 }
 
 test_5_10() {
@@ -77,6 +80,7 @@ test_5_10() {
 	local desc="Ensure that the memory usage for containers is limited"
 	local check="$testid - $desc"
 	local output
+	local total
   
 	output=$(cat /sys/fs/cgroup/memory/$containername/memory.limit_in_bytes)
    	
@@ -94,7 +98,8 @@ test_5_12() {
         local desc="Ensure that the container's root filesystem is mounted as read only"
         local check="$testid - $desc"
         local output
-        local Dobby_pid
+        local output_1
+	local DobbyInit_PID
 
         DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
         output=$(cat /proc/$DobbyInit_PID/mounts | grep "/ ")
@@ -112,6 +117,9 @@ test_5_12_1() {
         local testid="5.12.1"
         local desc="Ensure that /tmp is not bind-mounted directly into the container"
         local check="$testid - $desc"
+	local DobbyInit_PID
+	local input
+	local test
 
 	DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
         output=$(cat /proc/$DobbyInit_PID/mounts | grep "/tmp")
@@ -136,6 +144,11 @@ test_5_12_2() {
         local testid="5.12.2"
         local desc="Ensure that container rootfs directory is owned by the correct container uid/gid"
         local check="$testid - $desc"
+	local DobbyInit_PID
+	local read_uid
+	local read_gid
+	local uid
+	local gid
 
         DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
         
@@ -159,7 +172,9 @@ test_5_15() {
 	local desc="Ensure that the host's process namespace is not shared"
 	local check="$testid - $desc"
 	local output
-  
+  	local nspid
+	local pid
+
 	output=$(DobbyTool info $containername | jsonValue nsPid)
 	nspid=$(echo $output | awk '{ print $1}')
 		
@@ -177,7 +192,8 @@ test_5_17() {
 	local testid="5.17"
 	local desc="Ensure that host devices are not directly exposed to containers"
 	local check="$testid - $desc"
-	local output
+	local output_1
+	local output_2
 
 	output_1=$(cat /sys/fs/cgroup/devices/$containername/devices.list | grep  "m")
         output_2=$(cat /sys/fs/cgroup/devices/$containername/devices.list | grep  "*")
@@ -209,7 +225,6 @@ test_5_29() {
 	local desc="Ensure that Dobby's default bridge "dobby0" is used"
 	local check="$testid - $desc"
 	local output
-	local output_1
   
 	output=$(brctl show | grep dobby0 | awk '{ print $1}')
     
@@ -225,10 +240,10 @@ test_5_31() {
         local desc="Ensure that the Dobby socket is not mounted inside any containers"
         local check="$testid - $desc"
         local output
-	local Dobby_pid
+	local DobbyInit_PID
 
-	Dobby_pid=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')	
-	output=$(find /proc/$Dobby_pid/root/* -iname dobbyPty.sock | grep -v find)
+	DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')	
+	output=$(find /proc/$DobbyInit_PID/root/* -iname dobbyPty.sock | grep -v find)
 	
     if [ "$output" == "" ]; then
       pass "$check"

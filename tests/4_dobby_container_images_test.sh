@@ -25,6 +25,8 @@ test_4_8() {
 	local testid="4.8"
         local desc="Ensure setuid and setgid permissions are removed"
         local check="$testid - $desc"
+	local DobbyInit_PID
+	local output
 
 	DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
 	output=$(find /proc/$DobbyInit_PID/root/ -perm /6000)
