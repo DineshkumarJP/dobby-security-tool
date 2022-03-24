@@ -74,6 +74,8 @@ test_5_5
 test_5_9
 test_5_10
 test_5_12
+test_5_12_1
+test_5_12_2
 test_5_15
 test_5_17
 test_5_28
