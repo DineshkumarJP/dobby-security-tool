@@ -25,21 +25,15 @@ test_4_8() {
 	local testid="4.8"
         local desc="Ensure setuid and setgid permissions are removed"
         local check="$testid - $desc"
-	
-	thunder_persistent_path=$(cat /etc/WPEFramework/config.json | grep persistentpath |sed 's/.*://g' | sed 's/"//g' | sed 's/,//g')
+	local DobbyInit_PID
+	local output
 
-	output=$(find $thunder_persistent_path/$containername/Container/rootfs_dobby . -perm /6000)
-	test -d $thunder_persistent_path/$containername/Container
-	test=$(echo $?)
-	if [ "$test" == "0"  ]; then
-	
-		if [ "$output" == ""  ]; then
-	   	 pass "$check"
-	 	   return
-    		fi
-    	    	   fail "$check"
-	fi
-		echo "File not found "
-		fail "$check"
+	DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
+	output=$(find /proc/$DobbyInit_PID/root/ -perm /6000)
+	if [ "$output" == ""  ]; then
+	      pass "$check"
+      		return
+   	fi
+    	      fail "$check"
 
 }
