@@ -13,9 +13,8 @@ Based on the CIS Docker Benchmark 1.4.0.
 Usage: ./dobby_security.sh -c Netflix [OPTIONS] 
 Options:
   -c           mandatory Container name (Ensure the container is running)
-  -b           optional  Do not print colors
   -h           optional  Print this help message
-  -v	       optional  prints the additional prints
+  -V	       optional  prints the additional prints
 EOF
 }
 
