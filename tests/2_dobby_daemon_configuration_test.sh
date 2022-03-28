@@ -31,5 +31,5 @@ test_2_9() {
       fail "$check"
       return
     fi
-    pass "$check" "$output"
+    pass "$check"
 }
