@@ -44,20 +44,51 @@ test_5_5() {
         local check="$testid - $desc"
         local output_1
 	local output_2
+	local output_3
+	local var
         local DobbyInit_PID
-
+	local readwrite=0
+	local fullymounted=0 
 	DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
-        output_1=$(cat /proc/$DobbyInit_PID/mounts | grep "etc")
-        output_1=$(echo $output_1 | grep "rw")
 
-        output_2=$(cat /proc/$DobbyInit_PID/mounts | grep  -E 'bin|sbin|usr/bin|opt/logs')
-
-         if [ "$output_1" == "" -a "$output_2" == "" ]; then
-            pass "$check"
-            return
-        fi
-            fail "$check"
+        output_1=$(cat /proc/$DobbyInit_PID/mounts | grep  -E 'boot|dev|etc|lib|proc|sys|usr|bin|sbin|opt')
+	input=( "/boot" "/etc" "/lib" "/usr" "/bin" "/sbin" "/opt" )
+	        for i in "${input[@]}"
+        	do
+        		var=$(echo $output_1 | grep -E "(^| )$i( |$)")
+			if [ "$var" != "" ]; then
+				output_2=$(cat /proc/$DobbyInit_PID/mountinfo | grep -E "(^| )$i( |$)")
+				Fm_arr+=("$output_2");((fullymounted=fullymounted+1))
+				output_3=$(echo $output_2 | awk '{print $6}')
 	
+				if [ "$output_3" == "rw" ]; then
+					((readwrite=readwrite+1))
+					Rw_arr+=("$output_2")
+				fi
+				
+			fi	
+
+		done
+
+	if [ "$readwrite" == "0" -a "$fullymounted" == "0" ]; then
+		pass "$check"
+		return
+	elif [ "$fullymounted" -gt "0" -a "$readwrite" == "0" ]; then
+		warn "$check"
+		if [ -n "$verbose" ]; then
+		 printtxt "The following directories are mounted fully"
+		 for index in "${Fm_arr[@]}"; do echo "$index"; done
+		fi
+		return
+
+	else
+		fail "$check"
+		if [ -n "$verbose" ]; then
+		 printtxt "The following directories are mounted fully in rw mode"
+                 for index in "${Rw_arr[@]}"; do echo "$index"; done
+                fi
+
+	fi
 }
 
 test_5_9() {
@@ -114,30 +145,24 @@ test_5_12() {
 }
 
 test_5_12_1() {
-        local testid="5.12.1"
+        
+	local testid="5.12.1"
         local desc="Ensure that /tmp is not bind-mounted directly into the container"
         local check="$testid - $desc"
 	local DobbyInit_PID
-	local input
-	local test
-
+	
 	DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
-        output=$(cat /proc/$DobbyInit_PID/mounts | grep "/tmp")
-        echo $output > tmp.txt
-        input="tmp.txt"
-        while IFS= read -r line_1
-
+	output=$(cat /proc/$DobbyInit_PID/mounts | grep "/tmp" | awk '{print $3}')
+	 
+	while read line;
         do
-                test=$(echo $line_1 | awk '{print $3}')
-                if [ "$test" != "tmpfs" ]; then
-                      fail "$check"
-                      rm -rf tmp.txt
-                      return
+                if [ "$line" != "tmpfs" ]; then
+                        fail "$check"
+                        return
                 fi
-        done < "$input"
+        done <<< "$output"
 
-        pass "$check"
-        rm -rf tmp.txt
+	pass "$check"
 }
 
 test_5_12_2() {
@@ -203,6 +228,30 @@ test_5_17() {
       		return
     	fi
    		 fail "$check"  
+}
+
+test_5_24() {
+
+	local testid="5.24"
+        local desc="Ensure that cgroup is defined for the container"
+        local check="$testid - $desc"
+	local DobbyInit_PID
+	local output
+
+        DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
+	output=$(cat /proc/$DobbyInit_PID/cgroup)
+	while read line;
+        do
+		line=$(echo $line | grep -o ':/[^"]*' | cut -d '/' -f2-)
+                if [ "$line" != "$containername" ]; then
+                        fail "$check"
+                        return
+                fi
+        done <<< "$output"
+
+        pass "$check"
+	
+
 }
 
 test_5_28() {

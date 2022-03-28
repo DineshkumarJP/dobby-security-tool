@@ -34,6 +34,11 @@ test_4_8() {
 	      pass "$check"
       		return
    	fi
-    	      fail "$check"
+		
+         	fail "$check"
+		if [ -n "$verbose" ]; then
+			var=$(ls -lh $output)
+			printtxt "$var"
+		fi
 
 }

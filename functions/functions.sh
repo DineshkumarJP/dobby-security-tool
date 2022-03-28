@@ -16,7 +16,7 @@ output=$(DobbyTool info $containername |grep "error" | awk '{print $1}')
 if [ "$output" == "" ]; then
 	echo "Container is running"
 else
-	printtxt "${bldmgnclr} Failed to find the container ${txtrst}\n"
+	printtxt "${bldmgnclr} Failed to find the container \n Please enter valid container name' Ex:./dobby_security.sh -c Netflix [OPTIONS] ${txtrst}\n"
 	exit 1
 fi
 }

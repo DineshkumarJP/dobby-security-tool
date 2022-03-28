@@ -6,6 +6,35 @@ DobbyVersion=$(DobbyDaemon --version)
 crunVersion=$(crun --version)
 
 
+usage () {
+  cat <<EOF
+Checks for dozens of common best-practices around deploying Dobby containers in production.
+Based on the CIS Docker Benchmark 1.4.0.
+Usage: ./dobby_security.sh -c Netflix [OPTIONS] 
+Options:
+  -c           mandatory Container name (Ensure the container is running)
+  -b           optional  Do not print colors
+  -h           optional  Print this help message
+  -v	       optional  prints the additional prints
+EOF
+}
+
+
+# Get the flags
+# If you add an option here, please
+# remember to update usage() above.
+
+while getopts bhl:c:b:v:h:V args
+do
+  case $args in
+  c) containername="$OPTARG" ;;
+  b) nocolor="nocolor";;
+  V) verbose="verbose";;
+  h) usage; exit 0 ;;
+  esac
+done
+
+
 # Load outside scripts
 . ./functions/output.sh
 . ./functions/functions.sh
@@ -28,13 +57,16 @@ totalwarn=0
 header_info
 
 # Argument Validation
-if [ "$1" == "" ]; then
-	printtxt "${bldmgnclr} Warning: 'Please enter valid container name' Ex:./dobby_security.sh Netflix ${txtrst}\n"
+if [ "$containername" == "" -o "$1" == "" ]; then
+	printtxt "${bldmgnclr} Warning: 'Please enter valid container name' Ex:./dobby_security.sh -c Netflix [OPTIONS] ${txtrst}\n"
 	exit 1
-else
-	containername=$1
+elif [ -n "$containername" ]; then
+	containername=$containername
 	input_valid
+else
+	echo " TEST"
 fi
+
 
 # Warn if not root
 if [ "$(id -u)" != "0" ]; then
@@ -78,6 +110,7 @@ test_5_12_1
 test_5_12_2
 test_5_15
 test_5_17
+test_5_24
 test_5_28
 test_5_29
 test_5_31
