@@ -7,26 +7,17 @@ It is based on CIS_Docker_Benchmark_v1.3.1 standard and influenced from docker-b
 
 The tests are automated for each dobby containers.
 
-Running Dobby Security Tool
+**Running Dobby Security Tool**
 
 git clone https://github.com/DineshkumarJP/dobby-security-tool.git
 
 cd dobby-security
 
-./dobby-security.sh -c container_name 
+./dobby-security.sh container_name
 
-Ex: ./dobby-security.sh -c Netflix 
-
-If required additional prints for more information, follow below command
-  Ex: ./dobby-security.sh -c Netflix -V
-For help message, follow the below command
-  Ex: ./dobby-security.sh -h
-  
-Options:
-  -c           Container name (Ensure the container is running)
-  -h           Print this help message
-  -V           prints the additional prints
-  
-
+Ex: ./dobby-security.sh Netflix
 
 After excuted the script, you will get the output as test results summary.
+
+
+![image](https://user-images.githubusercontent.com/99791803/159849800-91830041-0e7e-444a-a3b6-d8032e43eed7.png)
