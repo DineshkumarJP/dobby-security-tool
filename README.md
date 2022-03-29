@@ -15,7 +15,7 @@ cd dobby-security
 
 ./dobby-security.sh -c container_name OPTIONS
 
-Ex: ./dobby-security.sh Netflix -V
+Ex: ./dobby-security.sh -c Netflix -V
 
 Options:
   -c           Container name (Ensure the container is running)
