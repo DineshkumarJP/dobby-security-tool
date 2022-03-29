@@ -28,5 +28,5 @@ Options:
   -V           prints the additional prints
   
 
+
 After excuted the script, you will get the output as test results summary.
-![image](https://user-images.githubusercontent.com/79261622/160535273-63b7e416-cf34-419f-8bc7-8a958b7389c7.png)
