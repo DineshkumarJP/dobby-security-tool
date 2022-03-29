@@ -10,6 +10,7 @@ bldmgnclr='\033[1;35m' # Bold Magenta
 bldwhtclr='\033[1;37m' # Bold white
 txtrst='\033[0m'	   # No Color
 
+
 # Print the text
 printtxt () {
   printf "%b\n" "$1"
