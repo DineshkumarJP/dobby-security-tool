@@ -52,7 +52,8 @@ test_5_5() {
 	DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
 
         output_1=$(cat /proc/$DobbyInit_PID/mounts | grep  -E 'boot|dev|etc|lib|proc|sys|usr|bin|sbin|opt')
-	input=( "/boot" "/etc" "/lib" "/usr" "/bin" "/sbin" "/opt" )
+	input=( "/boot" "/dev" "/etc" "/lib" "/proc" "/sys" "/usr" "/bin" "/sbin" "/opt" )
+
 	        for i in "${input[@]}"
         	do
         		var=$(echo $output_1 | grep -E "(^| )$i( |$)")
@@ -253,6 +254,41 @@ test_5_24() {
 	
 
 }
+
+test_5_24_1() {
+
+        local testid="5.24.1"
+        local desc="Ensure that CPU cgroup restrictions are enabled"
+        local check="$testid - $desc"
+	local output
+	
+	output=$(DobbyTool info $containername | grep  -E 'cpu|percpu') 
+	if [ "$output" == "" ]; then
+		fail "$check"
+		return
+	fi
+	
+	pass "$check"
+
+}
+
+test_5_24_2() {
+
+        local testid="5.24.2"
+        local desc="Ensure that GPU cgroup restrictions are enabled in supported platforms (Only supported for Mali patforms)"
+        local check="$testid - $desc"
+        local output
+
+        output=$(DobbyTool info $containername | grep "gpu")
+        if [ "$output" == "" ]; then
+                fail "$check"
+                return
+        fi
+
+        pass "$check"
+
+}
+
 
 test_5_28() {
 	local testid="5.28"

@@ -8,13 +8,16 @@ crunVersion=$(crun --version)
 
 usage () {
   cat <<EOF
+
 Checks for dozens of common best-practices around deploying Dobby containers in production.
 Based on the CIS Docker Benchmark 1.4.0.
 Usage: ./dobby_security.sh -c Netflix [OPTIONS] 
 Options:
-  -c           mandatory Container name (Ensure the container is running)
-  -h           optional  Print this help message
-  -V	       optional  prints the additional prints
+  -b    optional   Do not print colors
+  -c    mandatory  Container name (Ensure the container is running)
+  -h    optional   Print this help message
+  -v	optional   prints the additional prints
+
 EOF
 }
 
@@ -23,12 +26,12 @@ EOF
 # If you add an option here, please
 # remember to update usage() above.
 
-while getopts bhl:c:b:v:h:V args
+while getopts bhl:c:v args
 do
   case $args in
   c) containername="$OPTARG" ;;
   b) nocolor="nocolor";;
-  V) verbose="verbose";;
+  v) verbose="verbose";;
   h) usage; exit 0 ;;
   esac
 done
@@ -110,6 +113,8 @@ test_5_12_2
 test_5_15
 test_5_17
 test_5_24
+test_5_24_1
+test_5_24_2
 test_5_28
 test_5_29
 test_5_31

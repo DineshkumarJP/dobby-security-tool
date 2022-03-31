@@ -10,6 +10,14 @@ bldmgnclr='\033[1;35m' # Bold Magenta
 bldwhtclr='\033[1;37m' # Bold white
 txtrst='\033[0m'	   # No Color
 
+if [ -n "$nocolor" ] && [ "$nocolor" == "nocolor" ]; then
+  bldredclr=''
+  bldgrnclr=''
+  bldbluclr=''
+  bldylwclr=''
+  txtrst=''
+fi
+
 
 # Print the text
 printtxt () {
