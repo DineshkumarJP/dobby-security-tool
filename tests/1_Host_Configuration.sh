@@ -1,5 +1,9 @@
 #!/bin/bash
 
+test_1() {
+printtxt "\n${bldbluclr}Host Configuration ${txtrst}"
+}
+
 test_1_2_2() {
   local testid="1.2.2"
   local desc="Ensure that the version of Dobby is up to date"

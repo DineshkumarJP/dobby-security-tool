@@ -1,5 +1,9 @@
 #!/bin/bash
 
+test_4() {
+printtxt "\n${bldbluclr}Dobby Container images Test ${txtrst}"
+}
+
 test_4_1() {
 	local testid="4.1"
 	local desc="Ensure that a user for the container has been created"

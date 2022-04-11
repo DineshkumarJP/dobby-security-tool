@@ -1,4 +1,37 @@
 #!/bin/bash
+test_5() {
+printtxt "\n${bldbluclr}Dobby Continer Runtime Test ${txtrst}"
+}
+
+test_5_1() {
+        local testid="5.1"
+        local desc="Ensure that, if applicable, an AppArmor Profile is enabled"
+        local check="$testid - $desc"
+        local output
+        local DobbyInit_PID
+
+        FILE="/sys/module/apparmor/parameters/enabled"
+        if test -f $FILE; then
+                DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
+                output_1=$(cat /sys/module/apparmor/parameters/enabled)
+                if [ "$output_1" == "Y" ]; then
+                        output_2=$(cat /proc/$DobbyInit_PID/attr/current | grep -E 'complain|enforce')
+                        if [ "$output_2" == "" ]; then
+                                fail "$check"
+                                return
+                        else
+                                pass "$check"
+                                return
+                        fi
+
+                fi
+                fail "$check"
+
+        else
+                fail "$check"
+        fi
+}
+
 test_5_3() {
 	local testid="5.3"
 	local desc="Ensure that Linux kernel capabilities are restricted within containers"
@@ -90,6 +123,54 @@ test_5_5() {
                 fi
 
 	fi
+}
+
+test_5_5_1() {
+
+        local testid="5.5.1"
+        local desc="Ensure nosuid,nodev,noexec options are present in mount"
+        local check="$testid - $desc"
+        local output
+        local DobbyInit_PID
+
+        DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
+        #output=$(cat /proc/$DobbyInit_PID/mountinfo |  grep -v 'nosuid,nodev,noexec')
+        output=$(cat /proc/$DobbyInit_PID/mountinfo)
+        while read line;
+        do
+                check_1=$(echo $line | grep nosuid)
+
+                if [ "$check_1" == "" ]; then
+                        Flag_1=0
+                else
+                        Flag_1=1
+                fi
+
+                check_2=$(echo $line | grep nodev)
+                if [ "$check_2" == "" ]; then
+                        Flag_2=0
+                else
+                        Flag_2=1
+                fi
+
+                check_3=$(echo $line | grep noexec)
+                if [ "$check_3" == "" ]; then
+                        Flag_3=0
+                else
+                        Flag_3=1
+                fi
+
+                if [ "$Flag_1" == "1" -a "$Flag_2" == "1" -a "$Flag_3" == "1" ]; then
+                        check1=0
+                else
+                        line=$(echo $line | grep -o '/[^"]*')
+                        ouputarr+=("$line")
+                fi
+	done <<< "$output"
+
+        printf "%b\n" "${bldcynclr}[MANUAL] $check ${light_ylw}\nThese are the mounts without 'nosuid,nodev,noexec' options$1${txtrst} "
+        for index in "${ouputarr[@]}"; do printf "%b" "${bldwhtclr}$index\n$1${txtrst}"; done
+
 }
 
 test_5_9() {
@@ -190,9 +271,28 @@ test_5_12_2() {
     	fi
       		fail "$check"
 
+}
+test_5_12_3() {
+	
+	local testid="5.12.3"
+        local desc="Containers should use the Storage plugin to provide r/w storage areas where possible"
+        local check="$testid - $desc"
+        local DobbyInit_PID
+	
+	DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
+	output=$(cat /proc/$DobbyInit_PID/mounts | grep '/dev/loop' )
+	
+	if [ "$output" == "" ]; then
+                printf "%b\n" "${bldcynclr}[MANUAL] $check ${light_ylw}\nThere are no loopback storage mounts present in container"
+		printf "%b\n" "Ensure that storage plugin is used to persist container data wherever applicable.$1${txtrst}"
+                return
+        fi
+
+        printf "%b\n" "${bldcynclr}[MANUAL] $check ${light_ylw}\nThese are the loopback storage mounts present in container"
+        printf "%b\n" "${bldwhtclr}$output\n${light_ylw}Validate that storage plugin is used to persist container data wherever applicable.$1${txtrst} "
+
 
 }
-
 test_5_15() {
 	local testid="5.15"
 	local desc="Ensure that the host's process namespace is not shared"
@@ -231,6 +331,75 @@ test_5_17() {
    		 fail "$check"  
 }
 
+test_5_20() {
+	
+	local testid="5.20"
+        local desc="Ensure that the host's UTS namespace is not shared"
+        local check="$testid - $desc"
+        local output_1
+        local output_2
+	local DobbyInit_PID
+	local DobbyDaemon_PID
+	
+	DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
+	DobbyDaemon_PID=$(pidof DobbyDaemon)
+	output_1=$(readlink /proc/$DobbyInit_PID/ns/uts | cut -d "[" -f2- |  cut -d "]" -f1)
+	output_2=$(readlink /proc/$DobbyDaemon_PID/ns/uts | cut -d "[" -f2- |  cut -d "]" -f1)
+	
+	 if [ "$output_1" == "$output_2" ]; then
+                fail "$check"
+                return
+        fi
+                 pass "$check"
+
+}
+
+test_5_20_1() {
+
+        local testid="5.20.1"
+        local desc="Ensure that mount namespace is enabled"
+        local check="$testid - $desc"
+        local output_1
+        local output_2
+        local DobbyInit_PID
+        local DobbyDaemon_PID
+
+        DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
+        DobbyDaemon_PID=$(pidof DobbyDaemon)
+        output_1=$(readlink /proc/$DobbyInit_PID/ns/mnt | cut -d "[" -f2- |  cut -d "]" -f1)
+        output_2=$(readlink /proc/$DobbyDaemon_PID/ns/mnt | cut -d "[" -f2- |  cut -d "]" -f1)
+
+         if [ "$output_1" == "$output_2" ]; then
+                fail "$check"
+                return
+        fi
+                 pass "$check"
+
+}
+
+test_5_21() {
+
+        local testid="5.21"
+        local desc="Ensure the default seccomp profile is not Disabled"
+        local check="$testid - $desc"
+        local output
+        local DobbyInit_PID
+
+        DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
+        output=$(grep Seccomp /proc/$DobbyInit_PID/status | awk '{print $2}')
+
+        if [ "$output" == "0" ]; then
+                fail "$check"
+                 if [ -n "$verbose" ]; then
+                 printtxt "Seccomp is not enabled"
+                fi
+
+                return
+        fi
+
+        pass "$check"
+
+}
 test_5_24() {
 
 	local testid="5.24"
