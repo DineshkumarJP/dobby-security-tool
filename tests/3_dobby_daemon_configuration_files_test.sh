@@ -1,5 +1,9 @@
 #!/bin/bash
 
+test_3() {
+printtxt "\n${bldbluclr}Dobby Daemon Configuration File Test ${txtrst}"
+}
+
 test_3_1() {
   local testid="3.1"
   local desc="Ensure that the dobby.service file ownership is set to root:root"

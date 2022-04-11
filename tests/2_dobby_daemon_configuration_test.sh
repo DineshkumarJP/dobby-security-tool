@@ -1,5 +1,9 @@
 #!/bin/bash
 
+test_2() {
+printtxt "\n${bldbluclr}Dobby Daemon Configuration Test ${txtrst}"
+}
+
 test_2_1() {
   local testid="2.1"
   local desc="Run the Dobby daemon as a non-root user, if possible"
