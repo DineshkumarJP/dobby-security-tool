@@ -134,7 +134,6 @@ test_5_5_1() {
         local DobbyInit_PID
 
         DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
-        #output=$(cat /proc/$DobbyInit_PID/mountinfo |  grep -v 'nosuid,nodev,noexec')
         output=$(cat /proc/$DobbyInit_PID/mountinfo)
         while read line;
         do
