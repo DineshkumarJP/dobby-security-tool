@@ -10,7 +10,7 @@ usage () {
   cat <<EOF
 
 Checks for dozens of common best-practices around deploying Dobby containers in production.
-Based on the CIS Docker Benchmark 1.4.0.
+Based on the CIS Docker Benchmark 1.3.1
 Usage: ./dobby_security.sh -c Netflix [OPTIONS] 
 Options:
   -c    mandatory  Container name (Ensure the container is running)
