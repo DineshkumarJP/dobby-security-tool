@@ -12,4 +12,5 @@ test_1_2_2() {
   local crun=$crunVersion
   crun=$(echo $crun | sed 's/commit[^-]*$//')
   printf "%b\n" "${bldcynclr}[MANUAL] $check ${bldwhtclr} \nDobby $output \n$crun  $1${txtrst} "
+  totalmanual=$((totalmanual+1))
 }
