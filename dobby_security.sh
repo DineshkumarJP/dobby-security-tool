@@ -10,7 +10,7 @@ usage () {
   cat <<EOF
 
 Checks for dozens of common best-practices around deploying Dobby containers in production.
-Based on the CIS Docker Benchmark 1.3.1
+Based on the CIS Docker Benchmark 1.4.0.
 Usage: ./dobby_security.sh -c Netflix [OPTIONS] 
 Options:
   -c    mandatory  Container name (Ensure the container is running)
@@ -52,13 +52,14 @@ totalpass=0
 totalfail=0
 totalcount=0
 totalwarn=0
+totalmanual=0
 
 # Header format
 header_info
 
 # Argument Validation
 if [ "$containername" == "" -o "$1" == "" ]; then
-	printtxt "${bldmgnclr} Warning: 'Please enter valid container name' Ex:./dobby_security.sh -c Netflix [OPTIONS] ${txtrst}\n"
+	printtxt "${bldmgnclr} Error: 'Please enter valid container name' Ex:./dobby_security.sh -c Netflix [OPTIONS] ${txtrst}\n"
 	exit 1
 elif [ -n "$containername" ]; then
 	containername=$containername
@@ -124,12 +125,13 @@ for test in tests/*.sh; do
     fi
   done
   
-totalcount=$(($totalpass+$totalfail+$totalwarn))
+totalcount=$(($totalpass+$totalfail+$totalwarn+$totalmanual))
 printtxt "\n\n${bldbluclr}Test Results Summary${txtrst}"
-printtxt "${txtrst}Total Pass 		: $totalpass"
-printtxt "${txtrst}Total Fail 		: $totalfail"
-printtxt "${txtrst}Total Warnings 		: $totalwarn"
-printtxt "${txtrst}Total tests		: $totalcount\n"
+printtxt "${txtrst}Total Pass 		    : $totalpass"
+printtxt "${txtrst}Total Fail 		    : $totalfail"
+printtxt "${txtrst}Total Warnings 	            : $totalwarn"
+printtxt "${txtrst}Manual validation required  : $totalmanual"
+printtxt "${txtrst}Total tests		    : $totalcount\n"
 
 }
 

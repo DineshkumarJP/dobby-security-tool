@@ -110,16 +110,16 @@ test_5_5() {
 	elif [ "$fullymounted" -gt "0" -a "$readwrite" == "0" ]; then
 		warn "$check"
 		if [ -n "$verbose" ]; then
-		 printtxt "The following directories are mounted fully"
-		 for index in "${Fm_arr[@]}"; do echo "$index"; done
+		printf "%b\n" "${bldmgnclr}The following directories are mounted fully$1${txtrst} "
+		 for index in "${Fm_arr[@]}"; do printf "%b\n" " ${bldwhtclr} $index $1${txtrst}"; done
 		fi
 		return
 
 	else
 		fail "$check"
 		if [ -n "$verbose" ]; then
-		 printtxt "The following directories are mounted fully in rw mode"
-                 for index in "${Rw_arr[@]}"; do echo "$index"; done
+		 printf "%b\n" "${bldmgnclr}The following directories are mounted fully in rw mode$1${txtrst} "
+                 for index in "${Rw_arr[@]}"; do printf "%b\n" " ${bldwhtclr} $index $1${txtrst}"; done
                 fi
 
 	fi
@@ -132,7 +132,8 @@ test_5_5_1() {
         local check="$testid - $desc"
         local output
         local DobbyInit_PID
-
+	counter_1=0
+	counter_2=0
         DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
         output=$(cat /proc/$DobbyInit_PID/mountinfo)
         while read line;
@@ -160,16 +161,31 @@ test_5_5_1() {
                 fi
 
                 if [ "$Flag_1" == "1" -a "$Flag_2" == "1" -a "$Flag_3" == "1" ]; then
-                        check1=0
+			counter_1=$((counter_1+1))                       
                 else
+			counter_2=$((counter_2+1))
                         line=$(echo $line | grep -o '/[^"]*')
                         ouputarr+=("$line")
                 fi
 	done <<< "$output"
+	
+	if [ "$counter_2" == "0" -a  "$counter_1" -gt "0" ]; then
+		 printf "%b\n" "${bldcynclr}[MANUAL] $check \n${bldmgnclr}There are no mount points without 'nosuid,nodev,noexec' options.$1${txtrst} "
 
-        printf "%b\n" "${bldcynclr}[MANUAL] $check ${light_ylw}\nThese are the mounts without 'nosuid,nodev,noexec' options$1${txtrst} "
-        for index in "${ouputarr[@]}"; do printf "%b" "${bldwhtclr}$index\n$1${txtrst}"; done
+	else
+	
+		if [ -n "$verbose" ]; then
+			printf "%b\n" "${bldcynclr}[MANUAL] $check \n${bldmgnclr}These are the mounts without 'nosuid,nodev,noexec' options$1${txtrst} "
+			printf "%b\n" "${bldmgnclr}Validate that correct mount options are used wherever applicable"
+        		for index in "${ouputarr[@]}"; do printf "%b" "${bldwhtclr}$index\n$1${txtrst}"; done
+		else
+			printf "%b\n" "${bldcynclr}[MANUAL] $check ${bldmgnclr}\nThere are mount points  without 'nosuid,nodev,noexec' options$1${txtrst} "
+			printf "%b\n" "${bldmgnclr}Validate that correct mount options are used wherever applicable. Use -v option to get more details about these mount points$1${txtrst}"
+		fi
 
+
+	fi
+	totalmanual=$((totalmanual+1))
 }
 
 test_5_9() {
@@ -282,15 +298,21 @@ test_5_12_3() {
 	output=$(cat /proc/$DobbyInit_PID/mounts | grep '/dev/loop' )
 	
 	if [ "$output" == "" ]; then
-                printf "%b\n" "${bldcynclr}[MANUAL] $check ${light_ylw}\nThere are no loopback storage mounts present in container"
+                printf "%b\n" "${bldcynclr}[MANUAL] $check ${bldmgnclr}\nThere are no loopback storage mounts present in container"
 		printf "%b\n" "Ensure that storage plugin is used to persist container data wherever applicable.$1${txtrst}"
-                return
+                totalmanual=$((totalmanual+1))
+		return
         fi
-
-        printf "%b\n" "${bldcynclr}[MANUAL] $check ${light_ylw}\nThese are the loopback storage mounts present in container"
-        printf "%b\n" "${bldwhtclr}$output\n${light_ylw}Validate that storage plugin is used to persist container data wherever applicable.$1${txtrst} "
-
-
+	
+	if [ -n "$verbose" ]; then
+		printf "%b\n" "${bldcynclr}[MANUAL] $check ${bldmgnclr}\nThese are the loopback storage mounts present in container"
+        	printf "%b\n" "${bldwhtclr}$output\n${bldmgnclr}Validate that storage plugin is used to persist container data wherever applicable.$1${txtrst} "
+	else
+        printf "%b\n" "${bldcynclr}[MANUAL] $check ${bldmgnclr}\nThere are the loopback storage mounts present in container"
+        printf "%b\n" "${bldmgnclr}Validate that storage plugin is used to persist container data wherever applicable.Use -v option to get more details$1${txtrst} "
+	
+	fi
+	
 }
 test_5_15() {
 	local testid="5.15"
@@ -299,18 +321,16 @@ test_5_15() {
 	local output
   	local nspid
 	local pid
-
-	output=$(DobbyTool info $containername | jsonValue nsPid)
-	nspid=$(echo $output | awk '{ print $1}')
-		
-	output=$(DobbyTool info $containername | jsonValue pid)
-	pid=$(echo $output | awk '{ print $1}')
-
-    if [ "$nspid" == "$pid" ]; then
-      fail "$check"
-      return
-    fi
-      pass "$check"
+	
+	DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
+	pid=$(cat /proc/$DobbyInit_PID/status | grep -w 'Pid'| awk '{print $2}')
+	nspid=$(cat /proc/$DobbyInit_PID/status | grep -w 'NSpid'| awk '{print $3}')
+    
+	if [ "$nspid" == "$pid" ]; then
+      		fail "$check"
+      		return
+    	fi
+     		 pass "$check"
 }
 
 test_5_17() {
@@ -326,8 +346,14 @@ test_5_17() {
     	if [ "$output_1" == "" -a  "$output_2" == "" ]; then
         	pass "$check"
       		return
-    	fi
-   		 fail "$check"  
+    	else
+		fail "$check"  
+		if [ -n "$verbose" ]; then
+			printf "%b\n" "${bldmgnclr}These are the device nodes exposed to container with * or mknod permission"
+                	printf "%b\n" "${bldwhtclr}$output_1$output_2$1${txtrst} "
+		fi
+	fi
+
 }
 
 test_5_20() {
@@ -447,13 +473,24 @@ test_5_24_2() {
         local check="$testid - $desc"
         local output
 
-        output=$(DobbyTool info $containername | grep "gpu")
-        if [ "$output" == "" ]; then
-                fail "$check"
-                return
-        fi
+	
 
-        pass "$check"
+	FILE="/sys/fs/cgroup/gpu/$containername/gpu.limit_in_bytes"
+        if test -f $FILE; then
+		output=$(cat /sys/fs/cgroup/gpu/$containername/gpu.limit_in_bytes)
+        	total=$(cat /sys/fs/cgroup/gpu/gpu.limit_in_bytes)
+
+        	if [ "$output" == "0" -o "$output" == "-1" -o "$output" == "$total" ]; then
+          		fail "$check"
+         		return
+        	fi
+          	pass "$check"
+	else
+		fail "$check"
+		if [ -n "$verbose" ]; then
+			printf "%b\n" "${bldmgnclr}gpu cgroup is not supported in this platform"
+		fi
+	fi
 
 }
 
