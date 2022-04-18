@@ -48,7 +48,7 @@ Options:
 
 
 After excuted the script, you will get the output as test results summary.
-![18_1](https://user-images.githubusercontent.com/79261622/163803542-da009fff-45a9-49d1-9e38-7f8711188304.png)
+![image](https://user-images.githubusercontent.com/79261622/163807511-0dcdeefe-df21-498f-ad48-d81baaf56746.png)
 
 
 
