@@ -65,7 +65,7 @@ header () {
 # Header Version details
 header_info() {
 header "# ============================================================================================
-# Dobby Security Tool                                                                 
+# Dobby Security Tool v$version                                                                 
 #                                                                                            
 # A script based tool for security vulnerability scanning of dobby container                        
 # ============================================================================================"
