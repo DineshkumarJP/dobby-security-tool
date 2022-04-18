@@ -11,7 +11,7 @@ Running Dobby Security Tool
 
 git clone https://github.com/DineshkumarJP/dobby-security-tool.git
 
-cd dobby-security
+cd dobby-security-tool
 
 ./dobby_security.sh -c container_name 
 
