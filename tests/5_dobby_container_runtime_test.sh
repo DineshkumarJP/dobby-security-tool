@@ -540,11 +540,11 @@ test_5_28() {
   
 	output=$(cat /sys/fs/cgroup/pids/$containername/pids.max)
    
-    if [ "$output" == "max" ]; then
-      fail "$check"
-      return
-    fi
-      pass "$check"
+    	if [ "$output" == "max" ]; then
+      		fail "$check"
+      		return
+    	fi
+      	pass "$check"
 }
 
 test_5_29() {
