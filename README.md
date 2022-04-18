@@ -15,9 +15,11 @@ cd dobby-security
 
 ./dobby_security.sh -c container_name 
 
+If required additional prints for more information, follow below command
 
   Ex: ./dobby_security.sh -c Netflix -v
   
+  To run the individual test case, follow below command
   
   - Only run the test "5.10 - Ensure that the memory usage for containers is limited":
   
@@ -46,8 +48,10 @@ Options:
 
 
 After excuted the script, you will get the output as test results summary.
+![18_1](https://user-images.githubusercontent.com/79261622/163803542-da009fff-45a9-49d1-9e38-7f8711188304.png)
 
 
-![image](https://user-images.githubusercontent.com/79261622/162953578-d62afc70-2d0b-4195-bddf-2ebe53f6ec87.png)
+
+
 
 
