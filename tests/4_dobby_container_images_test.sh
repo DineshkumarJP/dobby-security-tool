@@ -18,7 +18,7 @@
 # limitations under the License.
 
 test_4() {
-printtxt "\n${bldbluclr}4. Dobby Container Images Test ${txtrst}"
+	printtxt "\n${bldbluclr}4. Dobby Container Images Test ${txtrst}"
 }
 
 test_4_1() {

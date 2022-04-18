@@ -18,7 +18,7 @@
 # limitations under the License.
 
 test_5() {
-printtxt "\n${bldbluclr}5. Dobby Container Runtime Test ${txtrst}"
+	printtxt "\n${bldbluclr}5. Dobby Container Runtime Test ${txtrst}"
 }
 
 test_5_1() {
@@ -219,6 +219,7 @@ test_5_5_1() {
 
 	fi
 	totalmanual=$((totalmanual+1))
+	
 }
 
 test_5_9() {
@@ -335,20 +336,19 @@ test_5_12_3() {
 	if [ "$output" == "" ]; then
                 printf "%b\n" "${bldmgnclr}[MANUAL] $check ${bldcynclr}\n There are no loopback storage mounts present in container"
 		printf "%b\n" " Ensure that storage plugin is used to persist container data wherever applicable.$1${txtrst}"
-            	return
-        fi
+        else
+		if [ -n "$verbose" ]; then
+			printf "%b\n" "${bldmgnclr}[MANUAL] $check ${bldcynclr}\n These are the loopback storage mounts present in container"
+        		printf "%b\n" "${bldwhtclr} $output\n${bldcynclr} Validate that storage plugin is used to persist container data wherever applicable.$1${txtrst} "
+		else
+        		printf "%b\n" "${bldmgnclr}[MANUAL] $check ${bldcynclr}\n There are loopback storage mounts present in container"
+        		printf "%b\n" "${bldcynclr} Validate that storage plugin is used to persist container data wherever applicable."\
+			" Use -v option to get more details$1${txtrst} "
 	
-	if [ -n "$verbose" ]; then
-		printf "%b\n" "${bldmgnclr}[MANUAL] $check ${bldcynclr}\n These are the loopback storage mounts present in container"
-        	printf "%b\n" "${bldwhtclr} $output\n${bldcynclr} Validate that storage plugin is used to persist container data wherever applicable.$1${txtrst} "
-	else
-        	printf "%b\n" "${bldmgnclr}[MANUAL] $check ${bldcynclr}\n There are loopback storage mounts present in container"
-        	printf "%b\n" "${bldcynclr} Validate that storage plugin is used to persist container data wherever applicable."\
-		" Use -v option to get more details$1${txtrst} "
-	
+		fi
 	fi
+
 	totalmanual=$((totalmanual+1))
-	
 }
 test_5_15() {
 	local testid="5.15"
