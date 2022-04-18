@@ -230,11 +230,11 @@ test_5_9() {
 	
 	output=$(grep -irns "veth" /tmp/dobby/plugin/networking | grep $containername)
 
-    if [ "$output" == "" ]; then
-    	fail "$check"
-      	return
-    fi
-    pass "$check"
+    	if [ "$output" == "" ]; then
+    		fail "$check"
+      		return
+    	fi
+    	pass "$check"
 }
 
 test_5_10() {
@@ -555,11 +555,11 @@ test_5_29() {
   
 	output=$(brctl show | grep dobby0 | awk '{ print $1}')
     
-    if [ "$output" == "dobby0" ]; then
-    	pass "$check"
-      	return
-    fi
-    fail "$check"
+    	if [ "$output" == "dobby0" ]; then
+    		pass "$check"
+      		return
+    	fi
+    	fail "$check"
 }
 
 test_5_31() {
