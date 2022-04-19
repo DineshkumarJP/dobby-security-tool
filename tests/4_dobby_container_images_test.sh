@@ -50,7 +50,7 @@ test_4_8() {
 	local output
 
 	DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
-	output=$(find /proc/$DobbyInit_PID/root/ -perm /6000)
+	output=$(find /proc/$DobbyInit_PID/root/ -perm /6000 2>/dev/null)
 	if [ "$output" == ""  ]; then
 		pass "$check"
       		return
