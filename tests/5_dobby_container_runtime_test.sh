@@ -570,7 +570,7 @@ test_5_31() {
 	local DobbyInit_PID
 
 	DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')	
-	output=$(find /proc/$DobbyInit_PID/root/* -iname dobbyPty.sock | grep -v find)
+	output=$(find /proc/$DobbyInit_PID/root/* -iname dobbyPty.sock 2>/dev/null)
 	
     	if [ "$output" == "" ]; then
       		pass "$check"
