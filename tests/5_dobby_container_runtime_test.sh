@@ -29,10 +29,9 @@ test_5_1() {
 	local output_2
         local DobbyInit_PID
 	local FILE
-	local test
 
         FILE="/sys/module/apparmor/parameters/enabled"
-        if test -f $FILE; then
+	if [ -f $FILE ]; then
                 DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
                 output_1=$(cat /sys/module/apparmor/parameters/enabled)
                 if [ "$output_1" == "Y" ]; then
@@ -342,7 +341,8 @@ test_5_12_3() {
         else
 		if [ -n "$verbose" ]; then
 			printf "%b\n" "${bldmgnclr}[MANUAL] $check ${bldcynclr}\n These are the loopback storage mounts present in container"
-        		printf "%b\n" "${bldwhtclr} $output\n${bldcynclr} Validate that storage plugin is used to persist container data wherever applicable.$1${txtrst} "
+        		printf "%b\n" "${bldwhtclr} $output"
+			printf "%b" "${bldcynclr} Validate that storage plugin is used to persist container data wherever applicable.$1${txtrst}\n"
 		else
         		printf "%b\n" "${bldmgnclr}[MANUAL] $check ${bldcynclr}\n There are loopback storage mounts present in container"
         		printf "%b\n" "${bldcynclr} Validate that storage plugin is used to persist container data wherever applicable."\
@@ -444,7 +444,7 @@ test_5_20_1() {
 test_5_21() {
 
         local testid="5.21"
-        local desc="Ensure that seccomp profile is used for container"
+        local desc="Ensure that seccomp profile is enabled for the container"
         local check="$testid - $desc"
         local output
         local DobbyInit_PID
@@ -516,11 +516,10 @@ test_5_24_2() {
         local check="$testid - $desc"
         local output
 	local FILE
-	local test
 	
 
 	FILE="/sys/fs/cgroup/gpu/$containername/gpu.limit_in_bytes"
-        if test -f $FILE; then
+	if [ -f $FILE ]; then
 		output=$(cat /sys/fs/cgroup/gpu/$containername/gpu.limit_in_bytes)
         	total=$(cat /sys/fs/cgroup/gpu/gpu.limit_in_bytes)
 
