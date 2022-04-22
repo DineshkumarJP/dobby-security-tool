@@ -54,3 +54,32 @@ test_2_9() {
     	fi
     	pass "$check"
 }
+
+test_2_17() {
+	local testid="2.17"
+        local desc="Ensure that a daemon-wide custom seccomp profile is applied if appropriate"
+        local check="$testid - $desc"
+        local DobbyDaemon_PID
+        local output
+
+        DobbyDaemon_PID=$(pidof DobbyDaemon)
+	output=$(grep Seccomp /proc/$DobbyDaemon_PID/status | awk '{print $2}')
+
+        if [ "$output" == "0" ]; then
+                fail "$check"
+                if [ -n "$verbose" ]; then
+                        printtxt "Seccomp is not enabled"
+                fi
+                return
+        elif [ "$output" == "1" -o "$output" == "2" ]; then
+                pass "$check"
+        else
+                fail "$check"
+                if [ -n "$verbose" ]; then
+                        printtxt "Seccomp is not enabled"
+                fi
+        fi
+
+
+}
+

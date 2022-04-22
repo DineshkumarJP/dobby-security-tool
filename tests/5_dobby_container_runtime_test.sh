@@ -108,7 +108,10 @@ test_5_5() {
 
 	DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
 
-        output_1=$(cat /proc/$DobbyInit_PID/mounts | grep  -E 'boot|dev|etc|lib|proc|sys|usr|bin|sbin|opt')
+	output=$(cat /proc/$DobbyInit_PID/mounts | grep -E 'ext|fat|sqaushfs')
+	#(considering only *ext*, *fat*, *squash* filesystem types	
+        
+	output_1=$(echo $output| grep  -E 'boot|dev|etc|lib|proc|sys|usr|bin|sbin|opt')
 	input=( "/boot" "/dev" "/etc" "/lib" "/proc" "/sys" "/usr" "/bin" "/sbin" "/opt" )
 
 	        for i in "${input[@]}"
@@ -117,7 +120,7 @@ test_5_5() {
 			if [ "$var" != "" ]; then
 				output_2=$(cat /proc/$DobbyInit_PID/mountinfo | grep -E "(^| )$i( |$)")
 				Fm_arr+=("$output_2");((fullymounted=fullymounted+1))
-				output_3=$(echo $output_2 | awk '{print $6}')
+				output_3=$(echo $output_2 | awk '{print $6}'| cut -d ',' -f 1)
 	
 				if [ "$output_3" == "rw" ]; then
 					((readwrite=readwrite+1))
@@ -134,16 +137,16 @@ test_5_5() {
 	elif [ "$fullymounted" -gt "0" -a "$readwrite" == "0" ]; then
 		warn "$check"
 		if [ -n "$verbose" ]; then
-		printf "%b\n" "${bldcynclr} The following directories are mounted fully$1${txtrst} "
-		 for index in "${Fm_arr[@]}"; do printf "%b\n" "${bldwhtclr} $index $1${txtrst}"; done
+			printf "%b\n" "${bldcynclr} The following directories are mounted fully in ro mode$1${txtrst} "
+			for index in "${Fm_arr[@]}"; do printf "%b\n" "${bldwhtclr} $index $1${txtrst}"; done
 		fi
 		return
 
 	else
 		fail "$check"
 		if [ -n "$verbose" ]; then
-		 printf "%b\n" "${bldcynclr} The following directories are mounted fully in rw mode$1${txtrst} "
-                 for index in "${Rw_arr[@]}"; do printf "%b\n" "${bldwhtclr} $index $1${txtrst}"; done
+			printf "%b\n" "${bldcynclr} The following directories are mounted fully in rw mode$1${txtrst} "
+                	for index in "${Rw_arr[@]}"; do printf "%b\n" "${bldwhtclr} $index $1${txtrst}"; done
                 fi
 
 	fi
@@ -265,7 +268,7 @@ test_5_12() {
 
         DobbyInit_PID=$(ps -fe | grep DobbyInit | grep $containername | awk '{print $2}')
         output=$(cat /proc/$DobbyInit_PID/mounts | grep "/ ")
-        output_1=$(echo $output | awk '{ print $4}')
+        output_1=$(echo $output | awk '{ print $4}'| cut -d ',' -f 1)
 
         if [ "$output_1" == "ro" ]; then
               pass "$check"
@@ -454,11 +457,15 @@ test_5_21() {
                 if [ -n "$verbose" ]; then
                 	printtxt "Seccomp is not enabled"
                 fi
-
                 return
-        fi
-
-        pass "$check"
+	elif [ "$output" == "1" -o "$output" == "2" ]; then
+		pass "$check"
+	else
+		fail "$check"
+		if [ -n "$verbose" ]; then
+                        printtxt "Seccomp is not enabled"
+                fi
+	fi
 
 }
 test_5_24() {

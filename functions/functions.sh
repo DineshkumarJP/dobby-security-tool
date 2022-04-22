@@ -47,6 +47,7 @@ dobby_daemon_configuration() {
 test_2
 test_2_1
 test_2_9
+test_2_17
 }
 
 dobby_daemon_configuration_files() {
