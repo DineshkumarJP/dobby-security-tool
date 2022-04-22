@@ -48,7 +48,8 @@ Options:
 
 
 After excuted the script, you will get the output as test results summary.
-![image](https://user-images.githubusercontent.com/79261622/164605841-1193fa3d-0606-4b3e-8502-0f93f656c852.png)
+![image](https://user-images.githubusercontent.com/79261622/164607132-1f90740f-a210-47d0-885a-505cd1d42e96.png)
+
 
 
 
