@@ -444,7 +444,7 @@ test_5_20_1() {
 test_5_21() {
 
         local testid="5.21"
-        local desc="Ensure the default seccomp profile is not Disabled"
+        local desc="Ensure that seccomp profile is used for container"
         local check="$testid - $desc"
         local output
         local DobbyInit_PID

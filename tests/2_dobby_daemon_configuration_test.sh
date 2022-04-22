@@ -66,15 +66,15 @@ test_2_17() {
 	output=$(grep Seccomp /proc/$DobbyDaemon_PID/status | awk '{print $2}')
 
         if [ "$output" == "0" ]; then
-                fail "$check"
-                if [ -n "$verbose" ]; then
+                 warn "$check"
+		if [ -n "$verbose" ]; then
                         printtxt "Seccomp is not enabled"
                 fi
                 return
         elif [ "$output" == "1" -o "$output" == "2" ]; then
                 pass "$check"
         else
-                fail "$check"
+                 warn "$check"
                 if [ -n "$verbose" ]; then
                         printtxt "Seccomp is not enabled"
                 fi
